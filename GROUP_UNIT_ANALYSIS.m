@@ -1,5 +1,5 @@
 % load db struct
-run('X:\cortical_dynamics\User\ms1121\Code\makedb_TCB2_MS'); % get db struct
+run('X:\cortical_dynamics\User\ms1121\Code\General\makedb_TCB2_MS'); % get db struct
 clear Batch1PFC Batch2PFC Batch3PFC AnaesPFC % clear unnecessary exp groups
 
 % TEMP MEASURES FOR ANALYSIS

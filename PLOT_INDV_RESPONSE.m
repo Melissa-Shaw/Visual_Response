@@ -2,7 +2,7 @@
 
 %% Set up
 shared_drive = 'X:';
-addpath([shared_drive '\cortical_dynamics\User\ms1121\Code']);
+addpath([shared_drive '\cortical_dynamics\User\ms1121\Code\General']);
 
 % load db struct
 run('makedb_TCB2_MS'); % get db struct

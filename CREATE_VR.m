@@ -21,7 +21,7 @@
 
 %% Set up
 shared_drive = 'X:';
-addpath([shared_drive '\cortical_dynamics\User\ms1121\Code']);
+addpath([shared_drive '\cortical_dynamics\User\ms1121\Code\General']);
 addpath([shared_drive '\cortical_dynamics\User\ms1121\Code\LFP_Analysis']);
 addpath([shared_drive '\cortical_dynamics\User\ms1121\Code\Spike_Analysis']); % calc_running_sum
 addpath([shared_drive '\cortical_dynamics\User\ms1121\Code\Psychopy']);
