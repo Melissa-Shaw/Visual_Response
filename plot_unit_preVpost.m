@@ -25,7 +25,8 @@ function plot_unit_preVpost(clu,VR)
             hold on
         end
         hold off
-        legend({'','Class','','','','Inv','','','','FullField'});
+        %legend({'','Class','','','','Inv','','','','FullField'});
+        legend({'Class','','','Inv','','','FullField'});
         title(['Grating ' conditions{cond}]);
         % grating stim raster
         nexttile

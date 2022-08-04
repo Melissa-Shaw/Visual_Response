@@ -32,7 +32,7 @@ run('makedb_TCB2_MS'); % get db struct
 clear Batch1PFC Batch2PFC Batch3PFC AnaesPFC % clear unnecessary exp groups
 
 % set parameters
-params.binsize = 1; % 100ms bins for psth
+params.binsize = 1; % 1ms bins for psth
 params.sig_threshold = 0.05; % threshold of significance (p-value)
 params.iCh = 3; % channel index for spikestruct LFP - NEED REASONING FOR CHOICE
 params.region = 'V1'; % probe region
@@ -44,12 +44,10 @@ params.cond_names = {'baselinepre','ViStimpre_grating','ViStimpre','ViStimpost_g
 % set script options - TEMP MEASURE TO MAKE SCRIPT FLEXIBLE WHILE CODING
 opt.find_rec_resp = true; % find receptive mapping response (slow to run)
 opt.save_VR = true; % save visual response (VR) mat file
-opt.plot_summary_fig = true;
-opt.save_figures = true; % save summary figures
 
 % load spikestruct
 i = 1; % set exp count
-for exp = [AnaesV1 AwakeV1]
+for exp = [149 199]
     disp(['Exp: ' num2str(exp)]);
     [spikestruct] = load_spikestruct(shared_drive,db,exp);
     disp('Spikestruct loaded');
@@ -71,7 +69,7 @@ for exp = [AnaesV1 AwakeV1]
     for n = 1:numel(VR.channel) % for each unit
         if strcmp(db(exp).probe,'NP1')
             VR.location{n} = NaN; % if NP1 probe then don't need location - MAYBE ADD DEPTH INSTEAD?
-        elseif VR.channel(n) >= 1 & VR.channel(n) <= 48
+        elseif VR.channel(n) <= 48
             VR.location{n} = 'shank_1_deep';
         elseif VR.channel(n) >= 97 & VR.channel(n) <= 144
             VR.location{n} = 'shank_1_shallow';
@@ -156,19 +154,6 @@ for exp = [AnaesV1 AwakeV1]
         disp('Saving VR...');
         save([shared_drive '\cortical_dynamics\User\ms1121\Analysis Testing\Exp_' num2str(exp) '_' db(exp).animal '_' db(exp).date '\VR.mat'],'VR','-v7.3');
         disp('VR saved');
-    end
-    
-    %% Create summary figure
-    % Plot summary figure
-    if opt.plot_summary_fig == true
-        plot_summary_figure(db(exp),exp,VR,params.smth);
-    end
-    
-    % Save summary figure
-    if opt.save_figures == true
-        disp('Saving summary figure...');
-        savefig([shared_drive '\cortical_dynamics\User\ms1121\Analysis Testing\Visual_Response_Figures\Exp_Summaries\Exp_' num2str(exp) '_Summary.fig']);
-        disp('Summary figure saved');
     end
 
     %% Add exp VR to group

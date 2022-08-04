@@ -9,7 +9,7 @@ run('makedb_TCB2_MS'); % get db struct
 clear Batch1PFC Batch2PFC Batch3PFC AnaesPFC % clear unnecessary exp groups
 
 % set script options - TEMP MEASURE TO MAKE SCRIPT FLEXIBLE WHILE CODING
-opt.save_indv_fig = false;
+opt.save_indv_fig = true;
 
 
 for exp = [AnaesV1 AwakeV1]
