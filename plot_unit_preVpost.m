@@ -1,23 +1,29 @@
 function plot_unit_preVpost(clu,VR)
-    
+
     n = find(VR.clusteridx==clu);
     conditions = {'Pre','Post'};
 
     figure
-    T = tiledlayout(2,4);
+    T = tiledlayout(1,2);
     
     for cond = 1:numel(conditions)
         % natural images psth
         nexttile
         plot_psth(VR.nat.psth{cond}(n,:),VR.nat.psth_SEM{cond}(n,:),VR.nat.stim,VR.nat.edges,VR.nat.colour{1});
+        xlabel('Time (ms)'); ylabel('Firing Rate (sp/s)');
+        xlim([-1500 2250]);
+        axis square
+        box off
         title(['Natural Images ' conditions{cond}]);
+        
         % natural images raster
         nexttile
         spiketimes_all = VR.nat.spiketimes{cond};
         colour_struct.color = VR.nat.colour{1};
         plotSpikeRaster(spiketimes_all(n,:)','PlotType','vertline','LineFormat',colour_struct,'XLimForCell',[-VR.nat.buffer VR.nat.buffer+VR.nat.stim]);
-        xlabel('Time (ms)'); ylabel('Trials');    
-    
+        xlabel('Time (ms)'); ylabel('Trials'); 
+        axis square
+
         % grating stim psth
         nexttile
         for type = 1:numel(VR.grat.stimtype)
@@ -25,9 +31,13 @@ function plot_unit_preVpost(clu,VR)
             hold on
         end
         hold off
-        %legend({'','Class','','','','Inv','','','','FullField'});
         legend({'Class','','','Inv','','','FullField'});
         title(['Grating ' conditions{cond}]);
+        xlabel('Time (ms)'); ylabel('Firing Rate (sp/s)');
+        xlim([-1500 2500]);
+        axis square
+        box off
+        
         % grating stim raster
         nexttile
         spiketimes_all = [];
@@ -43,6 +53,8 @@ function plot_unit_preVpost(clu,VR)
             plot(xPoints(min(pts):max(pts)),yPoints(min(pts):max(pts)),'k',lineFormat{:});
         end
         xlabel('Time (ms)'); ylabel('Trials');
+        axis square
+        box off
     end
          
     title(T,['Clu: ' num2str(VR.clusteridx(n)) ' Ch: ' num2str(VR.channel(n)) ' ' VR.location{n}],'interpreter','None');

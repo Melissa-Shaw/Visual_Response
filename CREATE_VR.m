@@ -47,7 +47,7 @@ opt.save_VR = true; % save visual response (VR) mat file
 
 % load spikestruct
 i = 1; % set exp count
-for exp = [149 199]
+for exp = 208%[AnaesV1 AwakeV1]
     disp(['Exp: ' num2str(exp)]);
     [spikestruct] = load_spikestruct(shared_drive,db,exp);
     disp('Spikestruct loaded');
@@ -133,23 +133,22 @@ for exp = [149 199]
         disp('RF created');
     end
     
-    % Find psth for visual responses
-    % Nat Stim
-    for p = 1:numel(VR.nat.frametimes) % for each presentation of natural images stimuli (pre/post)
+    % Find psth and response amplitudes for visual responses
+    for p = 1:2 % for each presentation of stimuli (pre/post)
         [VR.nat.spiketimes{p}] = find_spiketimes(VR.spike_raster,VR.nat.frametimes{p},VR.nat.buffer,VR.nat.stim);
         [VR.nat.psth{p},VR.nat.psth_SEM{p}] = find_psth(VR.nat.spiketimes{p},VR.nat.frametimes{p},VR.nat.edges,VR.M_baseFR);
         [~,VR.nat.sig_response{p}(:,1)] = find_sig_neurons(VR.nat.psth{p},VR.nat.buffer,VR.nat.stim,params.binsize,params.sig_threshold);
-    end
-    % Grat Stim
-    for p = 1:numel(VR.grat.frametimes) % for each presentation of grating stimuli (pre/post)
+        VR.nat.resp_amp{p} = mean(VR.nat.psth{p}(:,VR.nat.buffer+1:VR.nat.buffer+VR.nat.stim),2);
         for t = 1:numel(VR.grat.stimtype) % for each type of stimulus (class/inv/fullfield)
             [VR.grat.spiketimes{p}{t}] = find_spiketimes(VR.spike_raster,VR.grat.frametimes{p}(VR.grat.trials{t}),VR.grat.buffer,VR.grat.stim);
             [VR.grat.psth{p}{t},VR.grat.psth_SEM{p}{t}] = find_psth(VR.grat.spiketimes{p}{t},VR.grat.frametimes{p}(VR.grat.trials{t}),VR.grat.edges,VR.M_baseFR);
             [~,VR.grat.sig_response{p}(:,t)] = find_sig_neurons(VR.grat.psth{p}{t},VR.grat.buffer,VR.grat.stim,params.binsize,params.sig_threshold);
+            VR.grat.resp_amp{p}{t} = mean(VR.grat.psth{p}{t}(:,VR.grat.buffer+1:VR.grat.buffer+VR.grat.stim),2);
         end
     end
-    clear p
     
+    
+    %% Save VR
     if opt.save_VR == true
         disp('Saving VR...');
         save([shared_drive '\cortical_dynamics\User\ms1121\Analysis Testing\Exp_' num2str(exp) '_' db(exp).animal '_' db(exp).date '\VR.mat'],'VR','-v7.3');

@@ -20,8 +20,10 @@ for exp = [AnaesV1 AwakeV1]
     % set up save folder if required
     if opt.save_indv_fig == true
         close all % close all other open figures
-        FolderPath = [shared_drive '\cortical_dynamics\User\ms1121\Analysis Testing\Visual_Response_Figures\Exp_Summaries\Exp_' num2str(exp) '_Unit_Figures'];
-        mkdir(FolderPath);
+        FolderPath = [shared_drive '\cortical_dynamics\User\ms1121\Analysis Testing\Visual_Response_Figures\Exp_Summaries\Exp_' num2str(exp) '_Unit_Figures\All_Responses\'];
+        nat_path = [shared_drive '\cortical_dynamics\User\ms1121\Analysis Testing\Visual_Response_Figures\Exp_Summaries\Exp_' num2str(exp) '_Unit_Figures\Nat_Responses\'];
+        grat_path = [shared_drive '\cortical_dynamics\User\ms1121\Analysis Testing\Visual_Response_Figures\Exp_Summaries\Exp_' num2str(exp) '_Unit_Figures\Grat_Responses\'];
+        mkdir(FolderPath); mkdir(nat_path); mkdir(grat_path);
     end
 
     % plot natural images responses
@@ -59,6 +61,33 @@ for exp = [AnaesV1 AwakeV1]
         close all
     end
     
+    % plot unit preVpost
+    % Select units to be included in further analysis
+    nat_units = VR.nat.sig_response{1} | VR.nat.sig_response{2}; % units that are sig for nat stim either pre or post
+    pre_grat_units = VR.grat.sig_response{1}(:,1) & VR.grat.sig_response{1}(:,2) & VR.grat.sig_response{1}(:,3); % units that are sig for class, inv and ff stimtypes
+    post_grat_units = VR.grat.sig_response{2}(:,1) & VR.grat.sig_response{2}(:,2) & VR.grat.sig_response{2}(:,3);
+    grat_units = pre_grat_units | post_grat_units; % units that are sig for all_grat either pre or post
+    disp(['Num of units included: ' num2str(sum(nat_units)) ' nat units & ' num2str(sum(grat_units)) ' grat_units']);
+    
+    disp('Plotting sig unit preVpost responses...');
+    clusters = VR.clusteridx(nat_units);
+    for clu = 1:numel(clusters)
+        plot_unit_preVpost(clusters(clu),VR);
+        if opt.save_indv_fig == true
+            savefig([nat_path 'Unit_' num2str(clusters(clu)) '.fig']);
+            close all
+        end
+    end
+    
+    clusters = VR.clusteridx(grat_units);
+    for clu = 1:numel(clusters)
+        plot_unit_preVpost(clusters(clu),VR);
+        if opt.save_indv_fig == true
+            savefig([grat_path 'Unit_' num2str(clusters(clu)) '.fig']);
+            close all
+        end
+    end
+
 end
 
 

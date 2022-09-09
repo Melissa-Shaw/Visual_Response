@@ -6,11 +6,13 @@ function [NAT,GRAT] = group_unit_responses(VR)
         NAT(cond).psth = [];
         NAT(cond).psth_SEM = [];
         NAT(cond).sig_units = [];
+        NAT(cond).resp_amp = [];
         for type = 1:3 % for grating stimtypes
             GRAT(cond).psth{type} = [];
             GRAT(cond).psth_SEM{type} = [];
             GRAT(cond).stim_sig_units = [];
             GRAT(cond).sig_units = [];
+            GRAT(cond).resp_amp{type} = [];
         end
     end
 
@@ -20,9 +22,11 @@ function [NAT,GRAT] = group_unit_responses(VR)
             NAT(cond).psth = [NAT(cond).psth; VR(i).nat.psth{cond}];
             NAT(cond).psth_SEM = [NAT(cond).psth_SEM; VR(i).nat.psth{cond}];
             NAT(cond).sig_units = [NAT(cond).sig_units; VR(i).nat.sig_response{cond}];
+            NAT(cond).resp_amp = [NAT(cond).resp_amp; VR(i).nat.resp_amp{cond}];
             for type = 1:numel(VR(i).grat.stimtype)
                 GRAT(cond).psth{type} = [GRAT(cond).psth{type}; VR(i).grat.psth{cond}{type}];
                 GRAT(cond).psth_SEM{type} = [GRAT(cond).psth_SEM{type}; VR(i).grat.psth_SEM{cond}{type}];
+                GRAT(cond).resp_amp{type} = [GRAT(cond).resp_amp{type}; VR(i).grat.resp_amp{cond}{type}];
             end
             GRAT(cond).stim_sig_units = [GRAT(cond).stim_sig_units; VR(i).grat.sig_response{cond}];
         end
