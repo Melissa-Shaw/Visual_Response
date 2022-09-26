@@ -8,7 +8,7 @@ opt.smth = 250; % smoothing parameter (s) for LFP and population FR
 opt.save_fig = true;
 
 % create summary figure
-for exp = 208%[149 199]
+for exp = AnaesV1
     
     % load VR
     [VR] = load_VR(shared_drive,db,exp);

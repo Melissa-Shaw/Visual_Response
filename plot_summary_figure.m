@@ -7,7 +7,7 @@
 function plot_summary_figure(db,exp,VR,smth)
     %% Set up summary figure
     figure
-    sum_fig = tiledlayout(3,4);
+    sum_fig = tiledlayout(4,4);
     title(sum_fig,['Exp = ' num2str(exp) ' Num_units = ' num2str(sum(VR.units))],interpreter = 'None');
 
     % Plot spike raster
@@ -163,7 +163,7 @@ function plot_summary_figure(db,exp,VR,smth)
     legend([nat_leg class_leg inv_leg ff_leg],'Location','best');
     title('Pre Responsive Unit Locations');
     
-    % Plot pre scatter of unit locations on probe
+    % Plot post scatter of unit locations on probe
     nexttile(10)
     [nat_leg] = plot_shank_location(VR.location(VR.nat.sig_response{2}),VR.channel(VR.nat.sig_response{2}),'gx'); 
     nat_leg{1} = ['Nat: ' num2str(sum(VR.nat.sig_response{2}))]; hold on;
@@ -187,14 +187,22 @@ function plot_summary_figure(db,exp,VR,smth)
     b(4).FaceColor = VR.grat.colour{2}; b(5).FaceColor = VR.grat.colour{3};
     clear cond_sig_units x b 
 
-    % Plot driftmap with shanks separated - WRONG - NEEDS SERIOUS CHANGES
-    %if opt.plot_drift == true
-    %    nexttile(4)
-    %    disp('Creating driftmap...')
-    %    plotDriftmap_NP24(shared_drive,db,exp); % relies on very rough estimation of channel location
-    %    ylabel('');
-    %    title('Driftplot');
-    %    subtitle([db(exp).probe_orient{1} ' ' db(exp).probe_orient{2}]); % title describes probe orientation
-    %end
+    % Plot response amplitudes preVpost to each stim
+    nat_sig = VR.nat.sig_response{1} | VR.nat.sig_response{2};
+    grat_sig = sum(VR.grat.sig_response{1},2) == 3 | sum(VR.grat.sig_response{2},2) == 3;
+
+    nexttile(13)
+    plot_log_scatter(VR.nat.resp_amp{1}(nat_sig),VR.nat.resp_amp{2}(nat_sig),'gx');
+    xlabel('Resp Amp Before'); ylabel('Resp Amp After'); title(['Nat N = ' num2str(sum(nat_sig))]);
+    nexttile(14)
+    plot_log_scatter(VR.grat.resp_amp{1}{1}(grat_sig),VR.grat.resp_amp{2}{1}(grat_sig),'ko');
+    xlabel('Resp Amp Before'); ylabel('Resp Amp After'); title(['Class N = ' num2str(sum(grat_sig))]);
+    nexttile(15)
+    plot_log_scatter(VR.grat.resp_amp{1}{2}(grat_sig),VR.grat.resp_amp{2}{2}(grat_sig),'r+');
+    xlabel('Resp Amp Before'); ylabel('Resp Amp After'); title(['Inv N = ' num2str(sum(grat_sig))]);
+    nexttile(16)
+    plot_log_scatter(VR.grat.resp_amp{1}{3}(grat_sig),VR.grat.resp_amp{2}{3}(grat_sig),'b.');
+    xlabel('Resp Amp Before'); ylabel('Resp Amp After'); title(['FullField N = ' num2str(sum(grat_sig))]);
+    
 
 end

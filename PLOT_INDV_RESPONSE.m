@@ -12,7 +12,7 @@ clear Batch1PFC Batch2PFC Batch3PFC AnaesPFC % clear unnecessary exp groups
 opt.save_indv_fig = true;
 
 
-for exp = [AnaesV1 AwakeV1]
+for exp = [AnaesV1(6:8) AwakeV1(19:22)]
 
     % load VR
     [VR] = load_VR('X:',db,exp);

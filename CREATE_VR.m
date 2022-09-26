@@ -47,7 +47,7 @@ opt.save_VR = true; % save visual response (VR) mat file
 
 % load spikestruct
 i = 1; % set exp count
-for exp = 208%[AnaesV1 AwakeV1]
+for exp = [AnaesV1(6)]%[AnaesV1 AwakeV1]
     disp(['Exp: ' num2str(exp)]);
     [spikestruct] = load_spikestruct(shared_drive,db,exp);
     disp('Spikestruct loaded');

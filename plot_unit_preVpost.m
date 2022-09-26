@@ -4,7 +4,7 @@ function plot_unit_preVpost(clu,VR)
     conditions = {'Pre','Post'};
 
     figure
-    T = tiledlayout(1,2);
+    T = tiledlayout(2,4);
     
     for cond = 1:numel(conditions)
         % natural images psth
