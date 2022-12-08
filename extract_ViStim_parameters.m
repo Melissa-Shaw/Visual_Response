@@ -16,11 +16,14 @@ function [nat,grat,rec_map] = extract_ViStim_parameters(spikestruct,grat_cond,na
     nat.cond = nat_cond; 
     nat.frametimes = {spikestruct.frameTimes{nat_cond(1)}(ID_order) spikestruct.frameTimes{nat_cond(2)}(ID_order)};
     nat.colour = {'g'};
+    nat.marker = {'x'};
     nat.buffer = 1500;
     nat.stim = 750;
     nat.num_repeats = 6;
     nat.stimtype = {'nat'};
     nat.trials = {spikestruct.ViStimID_natural > 0}; % all stim for nat images
+    nat.directions = 1;
+    nat.direct_trials = {1};
     nat.edges = [-nat.buffer:binsize:nat.stim+nat.buffer];
     
     % set up grating stim parameters
@@ -31,12 +34,16 @@ function [nat,grat,rec_map] = extract_ViStim_parameters(spikestruct,grat_cond,na
     grat.frametimes = {spikestruct.frameTimes{grat_cond(1)}(ID_order_1) spikestruct.frameTimes{grat_cond(2)}(ID_order_2)}; % sort by ID order
     grat.frametimes = {grat.frametimes{1}(grat.det(:,1)) grat.frametimes{2}(grat.det(:,1))}; % sort by stimtype and direction
     grat.colour = {'k','r','b'};
+    grat.marker = {'o' '+' '.'};
     grat.buffer = 1500;
     grat.stim = 1000;
     grat.num_repeats = 10;
     grat.num_frames_stimtype = 8*grat.num_repeats; % 80 frames of each stimtype
     grat.stimtype = {'class' 'inv' 'ff'}; % class, inv, ff
     grat.trials = {grat.det(:,3) == 1, grat.det(:,3) == 2, grat.det(:,3) == 3};
+    grat.directions = unique(grat.det(:,4))';
+    grat.direct_trials = {grat.det(:,4) == 0, grat.det(:,4) == 45, grat.det(:,4) == 90, grat.det(:,4) == 135, grat.det(:,4) == 180,...
+        grat.det(:,4) == 225, grat.det(:,4) == 270, grat.det(:,4) == 315};
     grat.edges = [-grat.buffer:binsize:grat.stim+grat.buffer];
     
     % set up receptive mapping stim parameters

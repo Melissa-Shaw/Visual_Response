@@ -5,11 +5,14 @@ function plot_unit_preVpost(clu,VR)
 
     figure
     T = tiledlayout(2,4);
+    set(gcf,'color','w');
+    axes = [];
     
     for cond = 1:numel(conditions)
+        for t = 1:numel(ViStim.type)
         % natural images psth
-        nexttile
-        plot_psth(VR.nat.psth{cond}(n,:),VR.nat.psth_SEM{cond}(n,:),VR.nat.stim,VR.nat.edges,VR.nat.colour{1});
+        ax1 = nexttile;
+        plot_psth(VR.nat.psth(cond).type{t}(n,:),VR.nat.psth_SEM{cond}(n,:),VR.nat.stim,VR.nat.edges,VR.nat.colour{1});
         xlabel('Time (ms)'); ylabel('Firing Rate (sp/s)');
         xlim([-1500 2250]);
         axis square
@@ -25,7 +28,7 @@ function plot_unit_preVpost(clu,VR)
         axis square
 
         % grating stim psth
-        nexttile
+        ax2 = nexttile;
         for type = 1:numel(VR.grat.stimtype)
             plot_psth(VR.grat.psth{cond}{type}(n,:),VR.grat.psth_SEM{cond}{type}(n,:),VR.grat.stim,VR.grat.edges,VR.grat.colour{type});
             hold on
@@ -55,8 +58,11 @@ function plot_unit_preVpost(clu,VR)
         xlabel('Time (ms)'); ylabel('Trials');
         axis square
         box off
+        
+        axes = [axes ax1 ax2];
     end
-         
+    
+    linkaxes(axes,'y');
     title(T,['Clu: ' num2str(VR.clusteridx(n)) ' Ch: ' num2str(VR.channel(n)) ' ' VR.location{n}],'interpreter','None');
 
 end

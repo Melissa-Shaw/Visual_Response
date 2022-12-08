@@ -6,9 +6,7 @@ function [legend_array] = plot_shank_location(locations,channels,marker_style)
 
     % find x and y values for each unit location
     for n = 1:numel(locations) % for each unit
-        if isnan(locations{n}) % NP1 recordings dont have location
-            x = NaN; y = NaN;
-        elseif strcmp(locations(n),'shank_1_deep')
+        if strcmp(locations(n),'shank_1_deep')
             x = 1; y = channels(n);
         elseif strcmp(locations(n),'shank_2_deep')
             x = 2; y = channels(n) - 48;
@@ -25,7 +23,8 @@ function [legend_array] = plot_shank_location(locations,channels,marker_style)
         elseif strcmp(locations(n),'shank_4_shallow')
             x = 4; y = channels(n) - 288;
         else
-            disp(['No known location for unit: ' num2str(n)]);
+            %disp(['No known location for unit: ' num2str(n)]);
+            x = NaN; y = NaN; % if NP1 then no shank location
         end
         xData(n) = x;
         yData(n) = y;

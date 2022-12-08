@@ -11,18 +11,19 @@
 function [p_values,sig_response] = find_sig_neurons(psth_neuron,buffer,stim,binsize,sig_threshold)
   num_units = size(psth_neuron,1);
   p_values = NaN(num_units,1);
-  onset_bin = round((buffer/binsize)+1);
-  offset_bin = round(((buffer+stim)/binsize)+1);
+  onset_bin = (buffer/binsize)+1;
+  offset_bin = (buffer+stim)/binsize;
   for n = 1:num_units
     psth = psth_neuron(n,:);
     response = psth(onset_bin:offset_bin);
     baseline = psth(1:onset_bin-1);
     if buffer <= stim
-      [~,p] = ttest(baseline,response(1:numel(baseline)));
+      [p] = signrank(baseline,response(1:numel(baseline)));
     else
-      [~,p] = ttest(baseline(1:numel(response)),response);
+      [p] = signrank(baseline(1:numel(response)),response);
     end
-    p_values(n) = round(p,3);
+    %p_values(n) = round(p,3);
+    p_values(n) = p;
   end
   sig_response = p_values < sig_threshold;
 end

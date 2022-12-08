@@ -1,40 +1,78 @@
 
-function [NAT,GRAT] = group_unit_responses(VR)
+function [GROUP] = group_unit_responses(VR,stim)
+    
+    % set parameters
+    num_exp = numel(VR);
+    if strcmp(stim,'nat')
+        num_stimtype = numel(VR(1).nat.stimtype);
+        GROUP.stimtype = VR(1).nat.stimtype;
+        GROUP.colour = VR(1).nat.colour;
+        GROUP.marker = VR(1).nat.marker;
+        GROUP.stim = VR(1).nat.stim;
+        GROUP.buffer = VR(1).nat.buffer;
+    elseif strcmp(stim,'grat')
+        num_stimtype = numel(VR(1).grat.stimtype);
+        GROUP.stimtype = VR(1).grat.stimtype;
+        GROUP.colour = VR(1).grat.colour;
+        GROUP.marker = VR(1).grat.marker;
+        GROUP.stim = VR(1).grat.stim;
+        GROUP.buffer = VR(1).grat.buffer;
+    end
 
     % create empty arrays ready
     for cond = 1:2 % for pre and post conditions
-        NAT(cond).psth = [];
-        NAT(cond).psth_SEM = [];
-        NAT(cond).sig_units = [];
-        NAT(cond).resp_amp = [];
-        for type = 1:3 % for grating stimtypes
-            GRAT(cond).psth{type} = [];
-            GRAT(cond).psth_SEM{type} = [];
-            GRAT(cond).stim_sig_units = [];
-            GRAT(cond).sig_units = [];
-            GRAT(cond).resp_amp{type} = [];
+        for t = 1:num_stimtype % for grating stimtypes
+            GROUP.psth(cond).type{t} = [];
+            GROUP.psth_SEM(cond).type{t} = [];
+            GROUP.spont(cond).type{t} = [];
+            GROUP.evoked(cond).type{t} = [];
+            GROUP.resp(cond).type{t} = [];
+            GROUP.stim_sig_response(cond).type{t} = [];
         end
     end
+    GROUP.sig_units = [];
+    GROUP.M_baseFR = [];
+    GROUP.location = [];
 
     % extract visual responses
-    for i = 1:numel(VR)
-        for cond = 1:2 % for pre and post cond
-            NAT(cond).psth = [NAT(cond).psth; VR(i).nat.psth{cond}];
-            NAT(cond).psth_SEM = [NAT(cond).psth_SEM; VR(i).nat.psth{cond}];
-            NAT(cond).sig_units = [NAT(cond).sig_units; VR(i).nat.sig_response{cond}];
-            NAT(cond).resp_amp = [NAT(cond).resp_amp; VR(i).nat.resp_amp{cond}];
-            for type = 1:numel(VR(i).grat.stimtype)
-                GRAT(cond).psth{type} = [GRAT(cond).psth{type}; VR(i).grat.psth{cond}{type}];
-                GRAT(cond).psth_SEM{type} = [GRAT(cond).psth_SEM{type}; VR(i).grat.psth_SEM{cond}{type}];
-                GRAT(cond).resp_amp{type} = [GRAT(cond).resp_amp{type}; VR(i).grat.resp_amp{cond}{type}];
-            end
-            GRAT(cond).stim_sig_units = [GRAT(cond).stim_sig_units; VR(i).grat.sig_response{cond}];
+    for i = 1:num_exp
+        
+        % find stim data
+        if strcmp(stim,'nat')
+            ViStim = VR(i).nat;
+        elseif strcmp(stim,'grat')
+            ViStim = VR(i).grat;
         end
+        
+        % find responses
+        for cond = 1:2 % for pre and post cond
+            for t = 1:num_stimtype % for each stim type
+                GROUP.psth(cond).type{t} = [GROUP.psth(cond).type{t}; ViStim.psth(cond).type{t}];
+                GROUP.psth_SEM(cond).type{t} = [GROUP.psth_SEM(cond).type{t}; ViStim.psth_SEM(cond).type{t}];
+                GROUP.spont(cond).type{t} = [GROUP.spont(cond).type{t}; ViStim.spont(cond).type{t}];
+                GROUP.evoked(cond).type{t} = [GROUP.evoked(cond).type{t}; ViStim.evoked(cond).type{t}];
+                GROUP.resp(cond).type{t} = [GROUP.resp(cond).type{t}; ViStim.resp(cond).type{t}];
+                GROUP.stim_sig_response(cond).type{t} = [GROUP.stim_sig_response(cond).type{t}; ViStim.sig_response(cond).type{t}];
+            end
+        end
+        
+        % find units sig for classical and inverse
+        if strcmp(stim,'nat')
+            GROUP.sig_units = [GROUP.sig_units; ViStim.sig_units.type{1}];
+        elseif strcmp(stim,'grat')
+            GROUP.sig_units = [GROUP.sig_units; (ViStim.sig_units.type{1} & ViStim.sig_units.type{2})];
+        end
+        
+        % find baseline FR
+        GROUP.M_baseFR = [GROUP.M_baseFR; VR(i).M_baseFR];
+        GROUP.location = [GROUP.location; VR(i).location];
     end
-
-    % find grating units with sig response for all stimtypes
+    
+    GROUP.sig_units = logical(GROUP.sig_units);
     for cond = 1:2
-        GRAT(cond).sig_units = sum(GRAT(cond).stim_sig_units,2) == 3; % units with sig response to all 3 stimtypes
+        for t = 1:num_stimtype
+            GROUP.resp(cond).type{t}(GROUP.resp(cond).type{t} == Inf | GROUP.resp(cond).type{t} == -Inf) = NaN;
+        end
     end
     
 end
